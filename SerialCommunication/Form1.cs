@@ -353,6 +353,13 @@ namespace SerialCommunication
                         serialPortArduino.WriteLine("set d2 low");
                     }
                 }
+                else
+                {
+                    radioButtonVerbonden.Checked = false;
+                    labelStatus.Text = "geen poort gedetecteerd";
+                    buttonConnect.Text = "connect";
+
+                }
             }
             catch (Exception exception)
             {
