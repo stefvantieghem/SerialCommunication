@@ -117,7 +117,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -140,7 +139,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -163,7 +161,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -186,7 +183,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -207,7 +203,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -228,7 +223,6 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
-
             }
         }
 
@@ -256,6 +250,7 @@ namespace SerialCommunication
         {
             timerOefening3.Enabled = tabControl.SelectedIndex == 3;
             timerOefening4.Enabled = tabControl.SelectedIndex == 4;
+            timerOefening5.Enabled = tabControl.SelectedIndex == 5; 
         }
 
         private void timerOefening3_Tick(object sender, EventArgs e)
@@ -321,5 +316,56 @@ namespace SerialCommunication
                 buttonConnect.Text = "Connect";
             }
         }
+
+        private void timerOefening5_Tick(object sender, EventArgs e)
+        {
+           
+            try
+            {
+                if (serialPortArduino.IsOpen)
+                {
+                    serialPortArduino.ReadExisting();
+
+                    serialPortArduino.WriteLine("get a0");
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd(); 
+                    antwoord = antwoord.Substring(4);
+                    int value = Int32.Parse(antwoord);
+
+                    double gewensteTemp = (value * (40.0 / 1023.0)) + 5.0;
+                    labelGewensteTemp.Text = string.Format("{0:F1} °C", gewensteTemp);
+
+                    serialPortArduino.WriteLine("get a1");
+                    string antwoordd = serialPortArduino.ReadLine();
+                    antwoordd = antwoordd.TrimEnd();
+                    antwoordd = antwoordd.Substring(4);
+                    int value2 = Int32.Parse(antwoordd);
+
+                    double huidigeTemp = value2 * (500.0 / 1023.0);
+                    labelHuidigeTemp.Text = string.Format("{0:F1} °C", huidigeTemp);
+
+                    if (huidigeTemp < gewensteTemp)
+                    {
+                        serialPortArduino.WriteLine("set d2 high");
+                    }
+                    else
+                    {
+                        serialPortArduino.WriteLine("set d2 low");
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                timerOefening5.Enabled = false;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+              
+            }
+        }
+
+
     }
+    
 }
